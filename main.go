@@ -27,20 +27,31 @@ type VersionsPageMessage struct {
 
 func versionsPageHandler(w http.ResponseWriter, r *http.Request) {
 	versionsPageTemplate, _ := template.ParseFiles("templates/versions_page.html")
-	versions, _ := nugetInfo.GetNugetVersions(r.FormValue("nugetName"))
-	versionsPageMsg := VersionsPageMessage{versions}
-	versionsPageTemplate.Execute(w, versionsPageMsg)
+	if r.ContentLength != 0 {
+		versions, _ := nugetInfo.GetNugetVersions(r.FormValue("nugetName"))
+		versionsPageMsg := VersionsPageMessage{versions}
+		versionsPageTemplate.Execute(w, versionsPageMsg)
+	} else {
+		versionsPageTemplate.Execute(w, nil)
+	}
 }
 
 func metadataPageHandler(w http.ResponseWriter, r *http.Request) {
 	versionsPageTemplate, _ := template.ParseFiles("templates/metadata_page.html")
-	metadata, _ := nugetInfo.GetNugetMetadata(r.FormValue("nugetName"), r.FormValue("nugetVersion"))
-	versionsPageTemplate.Execute(w, metadata)
+
+	if r.ContentLength != 0 {
+		metadata, _ := nugetInfo.GetNugetMetadata(r.FormValue("nugetName"), r.FormValue("nugetVersion"))
+		versionsPageTemplate.Execute(w, metadata)
+	} else {
+		versionsPageTemplate.Execute(w, nil)
+	}
 }
 
 func homePageHandler(w http.ResponseWriter, r *http.Request) {
 	homePageTemplate, _ := template.ParseFiles("templates/home_page.html")
-	homePageMsg := HomePageMessage{"Welcome to Nuget page Information", time.Now().Format("2006-01-02 15:04:05")}
+	homePageMsg := HomePageMessage{
+		"Welcome to Nuget page Information",
+		time.Now().Format("2006-01-02 15:04:05")}
 	homePageTemplate.Execute(w, homePageMsg)
 }
 
