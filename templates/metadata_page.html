@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Nuget metadata</title>
+</head>
+
+<body>
+    <p>Nuget metadata page Information. Insert Nuget name and version. Click Submit</p>
+    <form method="POST">
+        <label>Nuget Name:</label><br />
+        <input type="text" name="nugetName"><br />
+        <label>Nuget Version:</label><br />
+        <input type="text" name="nugetVersion"><br />
+        <input type="submit">
+    </form>
+
+    <p>ID: {{ .ID }}</p>
+    <p>Version: {{ .Version }}</p>
+    <p>Authors: {{ .Authors }}</p>
+    <p>License: {{ .License }}</p>
+    <p>LicenseURL: {{ .LicenseURL }}</p>
+    <p>Icon: {{ .Icon }}</p>
+    <p>ProjectURL: {{ .ProjectURL }}</p>
+    <p>IconURL: {{ .IconURL }}</p>
+    <p>Description :{{ .Description }}</p>
+    <p>Copyright: {{ .Copyright }}</p>
+    <p>Tags: {{ .Tags }}</p>
+</body>
+
+</html>

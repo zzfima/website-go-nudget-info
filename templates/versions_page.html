@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 
 <head>
-    <title>Welcome to Nuget page Information</title>
+    <title>Nuget versions</title>
 </head>
 
 <body>
-    <p>{{ .Message }} </p>
-    <p>Current time: {{ .CurrentTime }}</p>
+    <p>Nuget versions page Information. Insert Nuget name. click Submit</p>
+    <form method="POST">
+        <label>Nuget Name:</label><br />
+        <input type="text" name="nugetName"><br />
+        <input type="submit">
+    </form>
 
     {{ range .Versions }}
-    <p class="lead"><b>{{ . }}</b></p>
+    <p>{{ . }}</p>
     {{end}}
 </body>
 
