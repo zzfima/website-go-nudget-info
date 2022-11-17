@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Welcome to Nuget page Information</title>
+</head>
+
+<body>
+    <p>{{ .Message }} </p>
+    <p>Current time: {{ .CurrentTime }}</p>
+
+    {{ range .Versions }}
+    <p class="lead"><b>{{ . }}</b></p>
+    {{end}}
+</body>
+
+</html>
