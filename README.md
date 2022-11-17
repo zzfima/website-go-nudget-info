@@ -32,3 +32,5 @@ Upload Docker to Azure:
 az group create --name AzureGoNugetRG --location "South Central US"
 az appservice plan create --name AzureGoNugetSP --resource-group AzureGoNugetRG --sku S1 --is-linux
 az webapp create --resource-group AzureGoNugetRG --plan AzureGoNugetSP  --name AzureGoNugetApp --deployment-container-image-name zzfima/docker-website-golang-nuget-info:latest
+
+Probably better create app service -> deployment center -> select github thats all
