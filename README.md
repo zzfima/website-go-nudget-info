@@ -21,7 +21,6 @@ Run: go run .
 
 Help: go help
 
-
 Upload docker file to docker.io:
 make sure Docker file exists
 make build
