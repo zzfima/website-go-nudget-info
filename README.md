@@ -21,6 +21,11 @@ Run: go run .
 
 Help: go help
 
+Make docker image:
+sudo docker build -t gonugetinfo .
+Run docker image:
+sudo docker run  -it --rm -p 8080:8080 -v gonugetinfo gonugetinfo
+
 Upload docker file to docker.io:
 make sure Docker file exists
 make build
