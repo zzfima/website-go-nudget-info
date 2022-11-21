@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -13,8 +14,13 @@ import (
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", homePageHandler).Methods("GET")
+
 	router.HandleFunc("/versions", versionsPageHandler).Methods("GET", "POST")
+	router.HandleFunc("/versions/{nugetName}", versionsHandler).Methods("GET")
+
 	router.HandleFunc("/metadata", metadataPageHandler).Methods("GET", "POST")
+	router.HandleFunc("/metadata/{nugetName}/{version}", metadataHandler).Methods("GET")
+
 	fmt.Println("web page for Nuget")
 	startServer(router)
 }
@@ -47,6 +53,15 @@ func versionsPageHandler(w http.ResponseWriter, r *http.Request) {
 	versionsPageTemplate.Execute(w, versionsPageMsg)
 }
 
+func versionsHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	nugetName := vars["nugetName"]
+	versions, _ := nugetInfo.GetNugetVersions(nugetName)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(versions)
+}
+
 func metadataPageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		metadataPageTemplate.Execute(w, nil)
@@ -55,6 +70,17 @@ func metadataPageHandler(w http.ResponseWriter, r *http.Request) {
 
 	metadata, _ := nugetInfo.GetNugetMetadata(r.FormValue("nugetName"), r.FormValue("nugetVersion"))
 	metadataPageTemplate.Execute(w, metadata)
+}
+
+func metadataHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	nugetName := vars["nugetName"]
+	version := vars["version"]
+
+	metadata, _ := nugetInfo.GetNugetMetadata(nugetName, version)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(metadata)
 }
 
 func homePageHandler(w http.ResponseWriter, r *http.Request) {
