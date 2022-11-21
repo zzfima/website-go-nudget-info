@@ -6,12 +6,17 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	nugetInfo "github.com/zzfima/Golang-Nuget-info"
 )
 
 func main() {
+	router := mux.NewRouter()
+	router.HandleFunc("/", homePageHandler).Methods("GET")
+	router.HandleFunc("/versions", versionsPageHandler).Methods("GET", "POST")
+	router.HandleFunc("/metadata", metadataPageHandler).Methods("GET", "POST")
 	fmt.Println("web page for Nuget")
-	startServer()
+	startServer(router)
 }
 
 // HomePageMessage ...
@@ -25,42 +30,40 @@ type VersionsPageMessage struct {
 	Versions []string
 }
 
-func versionsPageHandler(w http.ResponseWriter, r *http.Request) {
-	versionsPageTemplate, _ := template.ParseFiles("templates/versions_page.html")
+var (
+	metadataPageTemplate = template.Must(template.ParseFiles("templates/metadata_page.html"))
+	versionsPageTemplate = template.Must(template.ParseFiles("templates/versions_page.html"))
+	homePageTemplate     = template.Must(template.ParseFiles("templates/home_page.html"))
+)
 
-	if r.ContentLength != 0 {
-		versions, _ := nugetInfo.GetNugetVersions(r.FormValue("nugetName"))
-		versionsPageMsg := VersionsPageMessage{versions}
-		versionsPageTemplate.Execute(w, versionsPageMsg)
-	} else {
+func versionsPageHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
 		versionsPageTemplate.Execute(w, nil)
+		return
 	}
+
+	versions, _ := nugetInfo.GetNugetVersions(r.FormValue("nugetName"))
+	versionsPageMsg := VersionsPageMessage{versions}
+	versionsPageTemplate.Execute(w, versionsPageMsg)
 }
 
 func metadataPageHandler(w http.ResponseWriter, r *http.Request) {
-	versionsPageTemplate, _ := template.ParseFiles("templates/metadata_page.html")
-
-	if r.ContentLength != 0 {
-		metadata, _ := nugetInfo.GetNugetMetadata(r.FormValue("nugetName"), r.FormValue("nugetVersion"))
-		versionsPageTemplate.Execute(w, metadata)
-	} else {
-		versionsPageTemplate.Execute(w, nil)
+	if r.Method != http.MethodPost {
+		metadataPageTemplate.Execute(w, nil)
+		return
 	}
+
+	metadata, _ := nugetInfo.GetNugetMetadata(r.FormValue("nugetName"), r.FormValue("nugetVersion"))
+	metadataPageTemplate.Execute(w, metadata)
 }
 
 func homePageHandler(w http.ResponseWriter, r *http.Request) {
-	homePageTemplate, _ := template.ParseFiles("templates/home_page.html")
-
 	homePageMsg := HomePageMessage{
 		"Welcome to Nuget page Information",
 		time.Now().Format("2006-01-02 15:04:05")}
 	homePageTemplate.Execute(w, homePageMsg)
 }
 
-func startServer() {
-	http.HandleFunc("/", homePageHandler)
-	http.HandleFunc("/versions", versionsPageHandler)
-	http.HandleFunc("/metadata", metadataPageHandler)
-
-	http.ListenAndServe(":8080", nil)
+func startServer(router *mux.Router) {
+	http.ListenAndServe(":8080", router)
 }
