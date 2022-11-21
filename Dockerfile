@@ -2,6 +2,12 @@
 
 FROM golang:1.16-alpine
 
+RUN go install github.com/zzfima/Golang-Nuget-info
+RUN go install github.com/gorilla/mux
+
+ENV GO111MODULE=on
+ENV GOFLAGS=-mod=vendor
+
 WORKDIR /app
 
 COPY go.mod ./
