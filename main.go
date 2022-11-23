@@ -11,20 +11,6 @@ import (
 	nugetInfo "github.com/zzfima/Golang-Nuget-info"
 )
 
-func main() {
-	router := mux.NewRouter()
-	router.HandleFunc("/", homePageHandler).Methods("GET")
-
-	router.HandleFunc("/versions", versionsPageHandler).Methods("GET", "POST")
-	router.HandleFunc("/versions/{nugetName}", versionsHandler).Methods("GET")
-
-	router.HandleFunc("/metadata", metadataPageHandler).Methods("GET", "POST")
-	router.HandleFunc("/metadata/{nugetName}/{version}", metadataHandler).Methods("GET")
-
-	fmt.Println("web page for Nuget")
-	startServer(router)
-}
-
 // HomePageMessage ...
 type HomePageMessage struct {
 	Message     string
@@ -41,6 +27,20 @@ var (
 	versionsPageTemplate = template.Must(template.ParseFiles("templates/versions_page.html"))
 	homePageTemplate     = template.Must(template.ParseFiles("templates/home_page.html"))
 )
+
+func main() {
+	router := mux.NewRouter()
+	router.HandleFunc("/", homePageHandler).Methods("GET")
+
+	router.HandleFunc("/versions", versionsPageHandler).Methods("GET", "POST")
+	router.HandleFunc("/versions/{nugetName}", versionsHandler).Methods("GET")
+
+	router.HandleFunc("/metadata", metadataPageHandler).Methods("GET", "POST")
+	router.HandleFunc("/metadata/{nugetName}/{version}", metadataHandler).Methods("GET")
+
+	fmt.Println("web page for Nuget")
+	startServer(router)
+}
 
 func versionsPageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
